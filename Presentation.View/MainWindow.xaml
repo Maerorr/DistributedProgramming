@@ -4,9 +4,47 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Presentation.View"
+        xmlns:vm="clr-namespace:Presentation.ViewModel;assembly=Presentation"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
-
-    </Grid>
+    <Window.DataContext>
+        <vm:ViewModel/>
+    </Window.DataContext>
+    <Canvas>
+        <ItemsControl x:Name="ic" ItemsSource="{Binding Players}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <Ellipse Stroke="Red" Fill="Red" 
+                                 Width="{Binding Diameter}"
+                                 Height="{Binding Diameter}"
+                                 />
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas  Background="#444444" Width="800" Height="450"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemContainerStyle>
+                <Style TargetType="ContentPresenter">
+                    <Setter Property="Canvas.Left" Value="{Binding X}"/>
+                    <Setter Property="Canvas.Top" Value="{Binding Y}"/>
+                </Style>
+            </ItemsControl.ItemContainerStyle>
+        </ItemsControl>
+        <StackPanel Orientation="Horizontal">
+            <Button Content="Host Game" MinHeight="40" MinWidth="80" Command="{Binding HostGameClick}"/>
+            <Button Content="Join Game" MinHeight="40" MinWidth="80" Command="{Binding JoinGameClick}"/>
+            <Label Content="IP:" Margin="10" Foreground="White"/>
+            <TextBox Name="IP" Width="200" Height="20" TextWrapping="NoWrap" AcceptsReturn="False"/>
+        </StackPanel>
+        <Canvas>
+            <Button Content="↑" Canvas.Left="31" Canvas.Top="300" Width="20" Height="20" Command="{Binding MoveUpClick}"/>
+            <Button Content="↓" Canvas.Left="31" Canvas.Top="340" Width="20" Height="20" Command="{Binding MoveDownClick}"/>
+            <Button Content="←" Canvas.Left="11" Canvas.Top="320" Width="20" Height="20" Command="{Binding MoveLeftClick}"/>
+            <Button Content="→" Canvas.Left="51" Canvas.Top="320" Width="20" Height="20" Command="{Binding MoveRightClick}"/>
+        </Canvas>
+    </Canvas>
 </Window>
