@@ -13,7 +13,7 @@ internal class DataStorage : DataStorageAbstract
     
     public override void Remove(String name)
     {
-        throw new NotImplementedException();
+        players.Remove(players.Where(i => i.Name == name).Single());
     }
     
     public override int GetPlayerCount()

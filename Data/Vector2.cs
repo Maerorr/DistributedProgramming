@@ -37,5 +37,17 @@ namespace Data
         {
             return (float)Math.Sqrt((X - other.X) * (X - other.X) + (Y - other.Y) * (Y - other.Y));
         }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is Vector2)
+            {
+                var other = obj as Vector2;
+                if (other.X != this.X) { return false; }
+                if (other.Y != this.Y) { return false; }
+                return true;
+            }
+            return false;
+        }
     }
 }
