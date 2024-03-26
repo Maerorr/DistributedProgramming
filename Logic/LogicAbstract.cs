@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using Data;
 
 namespace Logic
@@ -18,5 +19,10 @@ namespace Logic
         {
             return new Logic(dataStorage ?? DataStorageAbstract.CreateInstance(), updateCallback);
         }
+
+        /*protected void OnPropertyChanged(ObservableCollection<Player> players, [CallerMemberName] string name = null)
+        {
+            PropertyChanged.Invoke(players, new PropertyChangedEventArgs());
+        }*/
     }
 }

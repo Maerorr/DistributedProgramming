@@ -1,11 +1,16 @@
-﻿namespace Data;
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
-public class Player
+namespace Data;
+
+public class Player : INotifyPropertyChanged
 {
     public String Name { get; private set; }
     public Vector2 Position { get; private set; }
     public float Speed { get; private set; }
     private Input _currentInput;
+
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     public enum Input
     {
@@ -44,6 +49,8 @@ public class Player
                 Position.X += Speed;
                 break;
         }
+
+        PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Position"));
     }
 
     public float Diameter
@@ -59,5 +66,10 @@ public class Player
     public float Y
     {
         get { return Position.Y - Diameter / 2.0f; }
+    }
+
+    protected void OnPropertyChanged([CallerMemberName] string name = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 }

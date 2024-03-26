@@ -1,6 +1,7 @@
 using Data;
 using Logic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Diagnostics;
 
 namespace LogicTest
@@ -28,6 +29,11 @@ namespace LogicTest
         {
             return new ObservableCollection<Player>(players);
         }
+
+        public override void AddSubscriber(Action<object, NotifyCollectionChangedEventArgs> subscriber)
+        {
+            // do nothing
+        }
     }
 
     [TestClass]
@@ -40,11 +46,9 @@ namespace LogicTest
         public void AddPlayerTest()
         {
             var dataStorage = new DataStorageForTest();
-            // currently, Logic creates a new player in the constructor
             var logic = LogicAbstract.CreateInstance(DoNothing, dataStorage);
             logic.AddPlayer("Player");
-            // we need to compensate for the initial player created in the constructor
-            Assert.AreEqual(2, logic.GetPlayerCount());
+            Assert.AreEqual(1, logic.GetPlayerCount());
         }
 
         [TestMethod]
@@ -53,7 +57,6 @@ namespace LogicTest
             var dataStorage = new DataStorageForTest();
             var logic = LogicAbstract.CreateInstance(DoNothing, dataStorage);
             // the initial player added in the constructor
-            logic.RemovePlayer("test");
             Assert.AreEqual(0, logic.GetPlayerCount());
 
             logic.AddPlayer("Player");

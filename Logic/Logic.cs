@@ -1,5 +1,7 @@
 ﻿using Data;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 
 namespace Logic;
 
@@ -12,17 +14,20 @@ internal class Logic : LogicAbstract
     {
         this._dataStorage = dataStorage;
         this._updateCallback = updateCallback;
-        AddPlayer("test");
+        this._dataStorage.AddSubscriber(UpdatePlayers);
     }
-    
+
     public override bool AddPlayer(string name)
     {
         if (string.IsNullOrWhiteSpace(name))
         {
             return false;
         }
+
+        var player = new Player(name, new Vector2(100, 100), 20.0f);
+        player.PropertyChanged += new System.ComponentModel.PropertyChangedEventHandler(UpdatePlayer);
+        _dataStorage.Add(player);
         
-        _dataStorage.Add(new Player(name, new Vector2(100, 100), 20.0f));
         return true;
     }
     
@@ -61,9 +66,18 @@ internal class Logic : LogicAbstract
             player.Move(input);
         }
 
+        //_updateCallback.Invoke();
+    }
+
+    private void UpdatePlayer(object sender, PropertyChangedEventArgs e)
+    {
         _updateCallback.Invoke();
     }
 
+    private void UpdatePlayers(object sender, NotifyCollectionChangedEventArgs e)
+    {
+        _updateCallback.Invoke();
+    }
 
     public override ObservableCollection<Player> GetObservableCollection()
     {

@@ -1,4 +1,6 @@
 ﻿using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Reflection;
 
 namespace Data;
 
@@ -19,6 +21,11 @@ internal class DataStorage : DataStorageAbstract
     public override int GetPlayerCount()
     {
         return players.Count;
+    }
+
+    public override void AddSubscriber(Action<object, NotifyCollectionChangedEventArgs> subscriber)
+    {
+        players.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(subscriber);
     }
 
     public override ObservableCollection<Player> GetAll()
