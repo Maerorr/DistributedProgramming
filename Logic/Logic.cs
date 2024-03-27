@@ -18,7 +18,6 @@ internal class Logic : LogicAbstract
         this._dataStorage = dataStorage;
         this._updateCallback = playerUpdateCallback;
         this._reactiveElementsUpdateCallback = reactiveElementsUpdateCallback;
-        AddPlayer("test");
         UpdateReactiveElements();
     }
 
@@ -32,6 +31,8 @@ internal class Logic : LogicAbstract
         var player = new Player(name, new Vector2(100, 100), 20.0f);
         player.PropertyChanged += new System.ComponentModel.PropertyChangedEventHandler(UpdatePlayer);
         _dataStorage.Add(player);
+
+        UpdatePlayers(this, null);
         
         return true;
     }

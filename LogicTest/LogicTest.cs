@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 namespace LogicTest
 {
-    public class DataStorageForTest : DataStorageAbstract
+    public class MockDataStorage : DataStorageAbstract
     {
         public List<Player> players = new List<Player>();
 
@@ -41,12 +41,13 @@ namespace LogicTest
     {
         // created just to pass as needed "Action" parameter that is called every time a player is moved
         public void DoNothing() { }
+        public void DoNothing(bool b) { }
 
         [TestMethod]
         public void AddPlayerTest()
         {
-            var dataStorage = new DataStorageForTest();
-            var logic = LogicAbstract.CreateInstance(DoNothing, dataStorage);
+            var dataStorage = new MockDataStorage();
+            var logic = LogicAbstract.CreateInstance(DoNothing, DoNothing, dataStorage);
             logic.AddPlayer("Player");
             Assert.AreEqual(1, logic.GetPlayerCount());
         }
@@ -54,8 +55,8 @@ namespace LogicTest
         [TestMethod]
         public void RemovePlayerTest()
         {
-            var dataStorage = new DataStorageForTest();
-            var logic = LogicAbstract.CreateInstance(DoNothing, dataStorage);
+            var dataStorage = new MockDataStorage();
+            var logic = LogicAbstract.CreateInstance(DoNothing, DoNothing, dataStorage);
             // the initial player added in the constructor
             Assert.AreEqual(0, logic.GetPlayerCount());
 
@@ -67,8 +68,8 @@ namespace LogicTest
         [TestMethod]
         public void MovePlayerTest()
         {
-            var dataStorage = new DataStorageForTest();
-            var logic = LogicAbstract.CreateInstance(DoNothing, dataStorage);
+            var dataStorage = new MockDataStorage();
+            var logic = LogicAbstract.CreateInstance(DoNothing, DoNothing, dataStorage);
 
             logic.AddPlayer("Player");
             var collection = logic.GetObservableCollection();

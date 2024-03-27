@@ -42,7 +42,6 @@ namespace Presentation.ViewModel
         }
         public ViewModel() {
             _model = new Model.Model(UpdateDisplayedPlayers, UpdateReactiveElements);
-            _model.AddPlayer();
             JoinGameClick = new RelayCommand(_model.AddPlayer);
             HostGameClick = new RelayCommand(_model.AddPlayer);
             MoveUpClick = new RelayCommand(_model.MoveUp);
