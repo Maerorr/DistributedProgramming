@@ -5,9 +5,8 @@ using Data;
 
 namespace Logic
 {
-    public abstract class LogicAbstract : INotifyPropertyChanged
+    public abstract class LogicAbstract
     {
-        public event PropertyChangedEventHandler PropertyChanged;
         public abstract bool AddPlayer(String name);
         public abstract bool RemovePlayer(String name);
         public abstract int GetPlayerCount();
@@ -15,14 +14,16 @@ namespace Logic
 
         public abstract ObservableCollection<Data.Player> GetObservableCollection();
 
-        public static LogicAbstract CreateInstance(Action updateCallback, DataStorageAbstract? dataStorage = null)
+        public static LogicAbstract CreateInstance(
+            Action playerUpdateCallback,
+            Action<bool> reactiveElementsUpdateCallback,
+            DataStorageAbstract? dataStorage = null)
         {
-            return new Logic(dataStorage ?? DataStorageAbstract.CreateInstance(), updateCallback);
+            return new Logic(
+                dataStorage ?? DataStorageAbstract.CreateInstance(),
+                playerUpdateCallback,
+                reactiveElementsUpdateCallback
+                );
         }
-
-        /*protected void OnPropertyChanged(ObservableCollection<Player> players, [CallerMemberName] string name = null)
-        {
-            PropertyChanged.Invoke(players, new PropertyChangedEventArgs());
-        }*/
     }
 }

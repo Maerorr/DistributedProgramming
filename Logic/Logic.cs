@@ -2,19 +2,24 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 
 namespace Logic;
 
 internal class Logic : LogicAbstract
 {
     private DataStorageAbstract _dataStorage;
+
     private Action _updateCallback;
-    
-    public Logic(DataStorageAbstract? dataStorage, Action updateCallback)
+    private Action<bool> _reactiveElementsUpdateCallback;
+
+    public Logic(DataStorageAbstract? dataStorage, Action playerUpdateCallback, Action<bool> reactiveElementsUpdateCallback)
     {
         this._dataStorage = dataStorage;
-        this._updateCallback = updateCallback;
-        this._dataStorage.AddSubscriber(UpdatePlayers);
+        this._updateCallback = playerUpdateCallback;
+        this._reactiveElementsUpdateCallback = reactiveElementsUpdateCallback;
+        AddPlayer("test");
+        UpdateReactiveElements();
     }
 
     public override bool AddPlayer(string name)
@@ -82,5 +87,17 @@ internal class Logic : LogicAbstract
     public override ObservableCollection<Player> GetObservableCollection()
     {
         return _dataStorage.GetAll();
+    }
+
+    private async void UpdateReactiveElements()
+    {
+        // simple reactive change of color
+        bool greenOrBlue = false;
+        while (true)
+        {
+            await Task.Delay(1000);
+            greenOrBlue = !greenOrBlue;
+            _reactiveElementsUpdateCallback.Invoke(greenOrBlue);
+        }
     }
 }

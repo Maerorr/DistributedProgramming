@@ -46,5 +46,7 @@
             <Button Content="←" Canvas.Left="11" Canvas.Top="320" Width="20" Height="20" Command="{Binding MoveLeftClick}"/>
             <Button Content="→" Canvas.Left="51" Canvas.Top="320" Width="20" Height="20" Command="{Binding MoveRightClick}"/>
         </Canvas>
+        <Rectangle Height="50" Stroke="Black" StrokeThickness="5" Width="50" Canvas.Left="423" Canvas.Top="10"
+                   Fill="{Binding ReactiveRectangleColor}"/>
     </Canvas>
 </Window>

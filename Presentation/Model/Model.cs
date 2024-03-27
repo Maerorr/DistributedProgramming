@@ -12,8 +12,9 @@ namespace Presentation.Model
     {
         private LogicAbstract _logic;
 
-        public Model(Action callback) {
-            _logic = LogicAbstract.CreateInstance(callback, null);
+        public Model(Action playerUpdateCallback, Action<bool> reactiveElementsUpdateCallback)
+        {
+            _logic = LogicAbstract.CreateInstance(playerUpdateCallback, reactiveElementsUpdateCallback, null);
         }
 
         public void AddPlayer()

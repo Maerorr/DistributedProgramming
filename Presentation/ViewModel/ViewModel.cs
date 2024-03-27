@@ -1,11 +1,7 @@
 ﻿using Presentation.ViewModel.MVVMLight;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace Presentation.ViewModel
 {
@@ -31,8 +27,21 @@ namespace Presentation.ViewModel
         public ICommand MoveLeftClick {  get; set; }
         public ICommand MoveRightClick {  get; set; }
 
+        private Brush _reactiveRectangleColor;
+        public Brush ReactiveRectangleColor
+        {
+            get
+            {
+                return _reactiveRectangleColor;
+            }
+            set
+            {
+                _reactiveRectangleColor = value;
+                RaisePropertyChanged();
+            }
+        }
         public ViewModel() {
-            _model = new Model.Model(UpdateDisplayedPlayers);
+            _model = new Model.Model(UpdateDisplayedPlayers, UpdateReactiveElements);
             _model.AddPlayer();
             JoinGameClick = new RelayCommand(_model.AddPlayer);
             HostGameClick = new RelayCommand(_model.AddPlayer);
@@ -46,6 +55,18 @@ namespace Presentation.ViewModel
         public void UpdateDisplayedPlayers()
         {
             Players = _model.GetPlayers();
+        }
+
+        public void UpdateReactiveElements(bool b)
+        {
+            if (b)
+            {
+                ReactiveRectangleColor = Brushes.Green;
+            }
+            else
+            {
+                ReactiveRectangleColor = Brushes.Blue;
+            }
         }
     }
 }
