@@ -5,10 +5,10 @@ namespace Data;
 
 public abstract class DataStorageAbstract
 {
-    public abstract void Add(Player player);
+    public abstract void Add(IPlayer player);
     public abstract void Remove(string name);
     public abstract int GetPlayerCount();
-    public abstract ObservableCollection<Player> GetAll();
+    public abstract List<IPlayer> GetPlayers();
 
     public abstract void AddSubscriber(Action<object, NotifyCollectionChangedEventArgs> subscriber);
     public static DataStorageAbstract? CreateInstance()

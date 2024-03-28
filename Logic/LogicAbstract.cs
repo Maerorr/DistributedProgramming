@@ -5,6 +5,13 @@ using Data;
 
 namespace Logic
 {
+    public interface ILogicPlayer
+    {
+        public string Name { get; }
+        public float X { get; }
+        public float Y { get; }
+    }
+
     public abstract class LogicAbstract
     {
         public abstract bool AddPlayer(String name);
@@ -12,7 +19,7 @@ namespace Logic
         public abstract int GetPlayerCount();
         public abstract void MovePlayer(string dir);
 
-        public abstract ObservableCollection<Data.Player> GetObservableCollection();
+        public abstract List<ILogicPlayer> GetPlayers();
 
         public static LogicAbstract CreateInstance(
             Action playerUpdateCallback,

@@ -3,24 +3,17 @@ using System.Runtime.CompilerServices;
 
 namespace Data;
 
-public class Player : INotifyPropertyChanged
+internal class Player : IPlayer
 {
     public String Name { get; private set; }
-    public Vector2 Position { get; private set; }
+    public IVector2 Position { get; private set; }
     public float Speed { get; private set; }
-    private Input _currentInput;
-
-    public event PropertyChangedEventHandler? PropertyChanged;
-
-    public enum Input
-    {
-        Up,
-        Down,
-        Left,
-        Right,
-    }
     
-    public Player(String name, Vector2 position, float speed)
+    public IInput _currentInput { get; private set; }
+    
+    public event PropertyChangedEventHandler? PropertyChanged;
+    
+    public Player(String name, IVector2 position, float speed)
     {
         this.Name = name;
         this.Position = position;
@@ -32,20 +25,20 @@ public class Player : INotifyPropertyChanged
         _currentInput = input;
     }
     
-    public void Move(Input input)
+    public void Move(IInput input)
     {
-        switch (input)
+        switch (input.Direction)
         {
-            case Input.Up:
+            case "up":
                 Position.Y -= Speed;
                 break;
-            case Input.Down:
+            case "down":
                 Position.Y += Speed;
                 break;
-            case Input.Left:
+            case "left":
                 Position.X -= Speed;
                 break;
-            case Input.Right:
+            case "right":
                 Position.X += Speed;
                 break;
         }

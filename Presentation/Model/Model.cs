@@ -47,9 +47,11 @@ namespace Presentation.Model
             _logic.MovePlayer("right");
         }
 
-        public ObservableCollection<Data.Player> GetPlayers()
+        public List<ModelPlayer> GetPlayers()
         {
-            return _logic.GetObservableCollection();
+            return _logic.GetPlayers()
+                .Select(player => new ModelPlayer(player))
+                .ToList();
         }
     }
 }

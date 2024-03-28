@@ -16,8 +16,8 @@
                 <DataTemplate>
                     <StackPanel>
                         <Ellipse Stroke="Red" Fill="Red" 
-                                 Width="{Binding Diameter}"
-                                 Height="{Binding Diameter}"
+                                 Width="50"
+                                 Height="50"
                                  />
                     </StackPanel>
                 </DataTemplate>

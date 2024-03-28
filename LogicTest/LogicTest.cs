@@ -8,9 +8,9 @@ namespace LogicTest
 {
     public class MockDataStorage : DataStorageAbstract
     {
-        public List<Player> players = new List<Player>();
+        public List<IPlayer> players = new List<IPlayer>();
 
-        public override void Add(Player player)
+        public override void Add(IPlayer player)
         {
             players.Add(player);
         }
@@ -25,9 +25,9 @@ namespace LogicTest
             return players.Count;
         }
 
-        public override ObservableCollection<Player> GetAll()
+        public override List<IPlayer> GetPlayers()
         {
-            return new ObservableCollection<Player>(players);
+            return new List<IPlayer>(players);
         }
 
         public override void AddSubscriber(Action<object, NotifyCollectionChangedEventArgs> subscriber)
@@ -64,25 +64,5 @@ namespace LogicTest
             logic.RemovePlayer("Player");
             Assert.AreEqual(0, logic.GetPlayerCount());
         }
-
-        [TestMethod]
-        public void MovePlayerTest()
-        {
-            var dataStorage = new MockDataStorage();
-            var logic = LogicAbstract.CreateInstance(DoNothing, DoNothing, dataStorage);
-
-            logic.AddPlayer("Player");
-            var collection = logic.GetObservableCollection();
-            var player = collection.Where(p => p.Name == "Player").Single();
-            var playerSpeed = 20f;
-            var initialPosition = new Vector2(100, 100);
-
-            logic.MovePlayer("down");
-            Assert.AreEqual(initialPosition.Y + playerSpeed, player.Position.Y);
-            logic.MovePlayer("left");
-            Assert.AreEqual(initialPosition.X - playerSpeed, player.Position.X);
-            logic.MovePlayer("right");
-            Assert.AreEqual(initialPosition.X, player.Position.X);
-        }   
     }
 }

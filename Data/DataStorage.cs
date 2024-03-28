@@ -6,9 +6,9 @@ namespace Data;
 
 internal class DataStorage : DataStorageAbstract
 {
-    private ObservableCollection<Player> players = new ObservableCollection<Player>();
+    private ObservableCollection<IPlayer> players = new ObservableCollection<IPlayer>();
     
-    public override void Add(Player player)
+    public override void Add(IPlayer player)
     {
         players.Add(player);
     }
@@ -28,8 +28,8 @@ internal class DataStorage : DataStorageAbstract
         players.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(subscriber);
     }
 
-    public override ObservableCollection<Player> GetAll()
+    public override List<IPlayer> GetPlayers()
     {
-        return new ObservableCollection<Player>(players);
+        return new List<IPlayer>(players);
     }
 }

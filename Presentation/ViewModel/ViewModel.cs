@@ -3,13 +3,15 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 using System.Windows.Media;
 
+using Presentation.Model;
+
 namespace Presentation.ViewModel
 {
     public class ViewModel : ViewModelBase
     {
         private Model.Model _model;
-        private ObservableCollection<Data.Player> _players;
-        public ObservableCollection<Data.Player> Players
+        private List<ModelPlayer> _players;
+        public List<ModelPlayer> Players
         {
             get => _players;
             set

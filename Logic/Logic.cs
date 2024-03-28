@@ -27,8 +27,8 @@ internal class Logic : LogicAbstract
         {
             return false;
         }
-
-        var player = new Player(name, new Vector2(100, 100), 20.0f);
+        
+        var player = IPlayer.Create(name, IVector2.Create(100, 100), 20.0f);
         player.PropertyChanged += new System.ComponentModel.PropertyChangedEventHandler(UpdatePlayer);
         _dataStorage.Add(player);
 
@@ -55,24 +55,12 @@ internal class Logic : LogicAbstract
 
     public override void MovePlayer(string dir)
     {
-        var players = _dataStorage.GetAll();
-        Data.Player.Input input = Player.Input.Up;
-        if (dir == "down")
-        {
-            input = Player.Input.Down;
-        } else if (dir == "left")
-        {
-            input = Player.Input.Left;
-        } else if (dir == "right")
-        {
-            input = Player.Input.Right;
-        }
+        var players = _dataStorage.GetPlayers();
+        var input = IInput.Create(dir);
         foreach (var player in players)
         {
             player.Move(input);
         }
-
-        //_updateCallback.Invoke();
     }
 
     private void UpdatePlayer(object sender, PropertyChangedEventArgs e)
@@ -85,9 +73,12 @@ internal class Logic : LogicAbstract
         _updateCallback.Invoke();
     }
 
-    public override ObservableCollection<Player> GetObservableCollection()
+    public override List<ILogicPlayer> GetPlayers()
     {
-        return _dataStorage.GetAll();
+        return _dataStorage.GetPlayers()
+                .Select(player => new LogicPlayer(player))
+                .Cast<ILogicPlayer>()
+                .ToList();
     }
 
     private async void UpdateReactiveElements()
