@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Data;
 using Logic;
 
 namespace Presentation.Model
@@ -47,7 +48,7 @@ namespace Presentation.Model
             _logic.MovePlayer("right");
         }
 
-        public ObservableCollection<Data.Player> GetPlayers()
+        public ObservableCollection<IPlayer> GetPlayers()
         {
             return _logic.GetObservableCollection();
         }

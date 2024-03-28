@@ -8,9 +8,9 @@ namespace LogicTest
 {
     public class MockDataStorage : DataStorageAbstract
     {
-        public List<Player> players = new List<Player>();
+        public List<IPlayer> players = new List<IPlayer>();
 
-        public override void Add(Player player)
+        public override void Add(IPlayer player)
         {
             players.Add(player);
         }
@@ -25,9 +25,9 @@ namespace LogicTest
             return players.Count;
         }
 
-        public override ObservableCollection<Player> GetAll()
+        public override ObservableCollection<IPlayer> GetAll()
         {
-            return new ObservableCollection<Player>(players);
+            return new ObservableCollection<IPlayer>(players);
         }
 
         public override void AddSubscriber(Action<object, NotifyCollectionChangedEventArgs> subscriber)
@@ -75,7 +75,7 @@ namespace LogicTest
             var collection = logic.GetObservableCollection();
             var player = collection.Where(p => p.Name == "Player").Single();
             var playerSpeed = 20f;
-            var initialPosition = new Vector2(100, 100);
+            var initialPosition = IVector2.Create(100, 100);
 
             logic.MovePlayer("down");
             Assert.AreEqual(initialPosition.Y + playerSpeed, player.Position.Y);

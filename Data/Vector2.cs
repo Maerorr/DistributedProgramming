@@ -2,10 +2,10 @@
 
 namespace Data
 {
-    public class Vector2
+    internal class Vector2 : IVector2
     {
-        public float X;
-        public float Y;
+        public float X { get; set; }
+        public float Y { get; set; }
 
         public Vector2(float x, float y)
         {
@@ -33,7 +33,7 @@ namespace Data
             return new Vector2(a.X / b, a.Y / b);
         }
 
-        public float Distance(Vector2 other)
+        public float Distance(IVector2 other)
         {
             return (float)Math.Sqrt((X - other.X) * (X - other.X) + (Y - other.Y) * (Y - other.Y));
         }

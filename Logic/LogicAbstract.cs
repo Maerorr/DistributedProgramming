@@ -12,7 +12,7 @@ namespace Logic
         public abstract int GetPlayerCount();
         public abstract void MovePlayer(string dir);
 
-        public abstract ObservableCollection<Data.Player> GetObservableCollection();
+        public abstract ObservableCollection<IPlayer> GetObservableCollection();
 
         public static LogicAbstract CreateInstance(
             Action playerUpdateCallback,
