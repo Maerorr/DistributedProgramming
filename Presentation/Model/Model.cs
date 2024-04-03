@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ClientPresentation.Model;
 using Logic;
 
 namespace Presentation.Model
@@ -11,10 +6,14 @@ namespace Presentation.Model
     public class Model
     {
         private LogicAbstract _logic;
+        public Action onPlayersUpdated;
+        public ModelConnectionHandler connectionHandler { get; private set; }
 
         public Model(Action playerUpdateCallback, Action<bool> reactiveElementsUpdateCallback)
         {
             _logic = LogicAbstract.CreateInstance(playerUpdateCallback, reactiveElementsUpdateCallback, null);
+            connectionHandler = new ModelConnectionHandler(_logic.GetConnectionHandler());
+            onPlayersUpdated += _logic.OnPlayersUpdated;
         }
 
         public void AddPlayer()
@@ -45,6 +44,11 @@ namespace Presentation.Model
         public void MoveRight()
         {
             _logic.MovePlayer("right");
+        }
+
+        public void RequestUpdate()
+        {
+            _logic.RequestUpdate();
         }
 
         public List<ModelPlayer> GetPlayers()

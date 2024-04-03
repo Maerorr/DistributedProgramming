@@ -1,4 +1,5 @@
-﻿using Data;
+﻿using ClientLogic;
+using Data;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -12,6 +13,9 @@ internal class Logic : LogicAbstract
 
     private Action _updateCallback;
     private Action<bool> _reactiveElementsUpdateCallback;
+    public Action playersUpdated;
+
+    private readonly ILogicConnectionHandler connectionHandler;
 
     public Logic(DataStorageAbstract? dataStorage, Action playerUpdateCallback, Action<bool> reactiveElementsUpdateCallback)
     {
@@ -19,6 +23,18 @@ internal class Logic : LogicAbstract
         this._updateCallback = playerUpdateCallback;
         this._reactiveElementsUpdateCallback = reactiveElementsUpdateCallback;
         UpdateReactiveElements();
+        connectionHandler = new LogicConnectionHandler(_dataStorage.GetConnectionHandler());
+        _dataStorage.playersUpdated += () => _updateCallback.Invoke();
+    }
+
+    public override void OnPlayersUpdated()
+    {
+        this.playersUpdated.Invoke();
+    }
+
+    public override void RequestUpdate()
+    {
+        _dataStorage.RequestUpdate();
     }
 
     public override bool AddPlayer(string name)
@@ -55,7 +71,7 @@ internal class Logic : LogicAbstract
 
     public override void MovePlayer(string dir)
     {
-        var players = _dataStorage.GetPlayers();
+        var players = _dataStorage.GetAll();
         var input = IInput.Create(dir);
         foreach (var player in players)
         {
@@ -75,10 +91,10 @@ internal class Logic : LogicAbstract
 
     public override List<ILogicPlayer> GetPlayers()
     {
-        return _dataStorage.GetPlayers()
-                .Select(player => new LogicPlayer(player))
-                .Cast<ILogicPlayer>()
-                .ToList();
+        return _dataStorage.GetAll()
+            .Select(player => new LogicPlayer(player))
+            .Cast<ILogicPlayer>()
+            .ToList();
     }
 
     private async void UpdateReactiveElements()
@@ -91,5 +107,10 @@ internal class Logic : LogicAbstract
             greenOrBlue = !greenOrBlue;
             _reactiveElementsUpdateCallback.Invoke(greenOrBlue);
         }
+    }
+
+    public override ILogicConnectionHandler GetConnectionHandler()
+    {
+        return connectionHandler;
     }
 }

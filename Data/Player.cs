@@ -60,7 +60,7 @@ internal class Player : IPlayer
     {
         get { return Position.Y - Diameter / 2.0f; }
     }
-
+    
     protected void OnPropertyChanged([CallerMemberName] string name = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));

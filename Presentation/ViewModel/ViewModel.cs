@@ -1,9 +1,9 @@
 ﻿using Presentation.ViewModel.MVVMLight;
-using System.Collections.ObjectModel;
 using System.Windows.Input;
 using System.Windows.Media;
-
+using ClientPresentation.Model;
 using Presentation.Model;
+using System.Diagnostics;
 
 namespace Presentation.ViewModel
 {
@@ -29,6 +29,8 @@ namespace Presentation.ViewModel
         public ICommand MoveLeftClick {  get; set; }
         public ICommand MoveRightClick {  get; set; }
 
+        string connectionStateString;
+
         private Brush _reactiveRectangleColor;
         public Brush ReactiveRectangleColor
         {
@@ -44,6 +46,14 @@ namespace Presentation.ViewModel
         }
         public ViewModel() {
             _model = new Model.Model(UpdateDisplayedPlayers, UpdateReactiveElements);
+            _model.connectionHandler.onError += OnConnectionStateChanged;
+            _model.connectionHandler.log += Log;
+            _model.connectionHandler.onMessage += OnMessage;
+
+            _model.onPlayersUpdated += UpdateDisplayedPlayers;
+
+            OnConnectionStateChanged();
+
             JoinGameClick = new RelayCommand(_model.AddPlayer);
             HostGameClick = new RelayCommand(_model.AddPlayer);
             MoveUpClick = new RelayCommand(_model.MoveUp);
@@ -58,6 +68,11 @@ namespace Presentation.ViewModel
             Players = _model.GetPlayers();
         }
 
+        public void OnMessage(string msg)
+        {
+            Console.WriteLine($"New message {msg}.");
+        }
+
         public void UpdateReactiveElements(bool b)
         {
             if (b)
@@ -67,6 +82,28 @@ namespace Presentation.ViewModel
             else
             {
                 ReactiveRectangleColor = Brushes.Blue;
+            }
+        }
+
+        private void Log(string message)
+        {
+            Console.WriteLine(message);
+        }
+
+        private void OnConnectionStateChanged()
+        {
+            bool modelState = _model.connectionHandler.IsConnected();
+            Trace.WriteLine($"Connection State: {modelState}");
+            connectionStateString = modelState ? "Connected" : "Not Connected";
+
+            if (!modelState)
+            {
+                _model.connectionHandler.Connect(new Uri(@"ws://localhost:9998"));
+            }
+            else
+            {
+                Trace.WriteLine("Requesting Update");
+                _model.RequestUpdate();
             }
         }
     }

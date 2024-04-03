@@ -25,14 +25,24 @@ namespace LogicTest
             return players.Count;
         }
 
-        public override List<IPlayer> GetPlayers()
+        public override ObservableCollection<IPlayer> GetAll()
         {
-            return new List<IPlayer>(players);
+            return new ObservableCollection<IPlayer>(players);
         }
 
         public override void AddSubscriber(Action<object, NotifyCollectionChangedEventArgs> subscriber)
         {
             // do nothing
+        }
+
+        public override IConnectionHandler GetConnectionHandler()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void RequestUpdate()
+        {
+            throw new NotImplementedException();
         }
     }
 
@@ -64,5 +74,25 @@ namespace LogicTest
             logic.RemovePlayer("Player");
             Assert.AreEqual(0, logic.GetPlayerCount());
         }
+
+        [TestMethod]
+        public void MovePlayerTest()
+        {
+            var dataStorage = new MockDataStorage();
+            var logic = LogicAbstract.CreateInstance(DoNothing, DoNothing, dataStorage);
+
+            logic.AddPlayer("Player");
+            var collection = logic.GetPlayers();
+            var player = collection.Where(p => p.Name == "Player").Single();
+            var playerSpeed = 20f;
+            var initialPosition = IVector2.Create(100, 100);
+
+            logic.MovePlayer("down");
+            Assert.AreEqual(initialPosition.Y + playerSpeed, player.Position.Y);
+            logic.MovePlayer("left");
+            Assert.AreEqual(initialPosition.X - playerSpeed, player.Position.X);
+            logic.MovePlayer("right");
+            Assert.AreEqual(initialPosition.X, player.Position.X);
+        }   
     }
 }

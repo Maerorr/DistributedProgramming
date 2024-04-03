@@ -1,17 +1,8 @@
-﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
+﻿using ClientLogic;
 using Data;
 
 namespace Logic
 {
-    public interface ILogicPlayer
-    {
-        public string Name { get; }
-        public float X { get; }
-        public float Y { get; }
-    }
-
     public abstract class LogicAbstract
     {
         public abstract bool AddPlayer(String name);
@@ -21,16 +12,53 @@ namespace Logic
 
         public abstract List<ILogicPlayer> GetPlayers();
 
+        public event Action playersUpdated;
+
+        public abstract void RequestUpdate();
+
         public static LogicAbstract CreateInstance(
             Action playerUpdateCallback,
             Action<bool> reactiveElementsUpdateCallback,
             DataStorageAbstract? dataStorage = null)
         {
             return new Logic(
-                dataStorage ?? DataStorageAbstract.CreateInstance(),
+                dataStorage ?? DataStorageAbstract.CreateInstance(null),
                 playerUpdateCallback,
                 reactiveElementsUpdateCallback
                 );
         }
+
+        public abstract void OnPlayersUpdated();
+
+        public abstract ILogicConnectionHandler GetConnectionHandler();
+    }
+
+    public interface ILogicVector2
+    {
+        float X { get; }
+        float Y { get; }
+    }
+
+    public interface ILogicPlayer
+    {
+        float Diameter { get; }
+        float X { get; }
+        float Y { get; }
+
+        string Name { get; }
+
+        ILogicVector2 Position { get; }
+    }
+
+    public interface ILogicConnectionHandler
+    {
+        event Action<string> log;
+        event Action<string> onMessage;
+        event Action onClose;
+        event Action onError;
+
+        Task Connect(Uri peer);
+        Task Disconnect();
+        bool IsConnected();
     }
 }
