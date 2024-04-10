@@ -21,6 +21,13 @@ namespace ServerLogic
             playerNames.Add("Matthew");
             playerNames.Add("Adam");
             playerNames.Add("Janice");
+            playerNames.Add("Samantha");
+            playerNames.Add("Michael");
+            playerNames.Add("David");
+            playerNames.Add("Sarah");
+            playerNames.Add("Jessica");
+            playerNames.Add("Emily");
+            playerNames.Add("Olivia");
 
             for (int i = 0; i < 3; i++)
             {
