@@ -18,7 +18,7 @@ namespace GlobalApi
         public static string GetHeader(string json)
         {
             JObject obj = JObject.Parse(json);
-            if (obj.TryGetValue("header", out JToken? value))
+            if (obj.TryGetValue("Header", out JToken? value))
             {
                 return value.ToString();
             }

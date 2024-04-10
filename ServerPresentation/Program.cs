@@ -41,7 +41,11 @@ namespace ServerPresentation
             // Create player for this connection
             Guid newPlayerId = logic.AddPlayer();
 
-            JoinResponse joinResponse = new JoinResponse(newPlayerId);
+            JoinResponse joinResponse = new JoinResponse
+            {
+                Header = Headers.JoinResponse,
+                GuidForPlayer = newPlayerId,
+            };
             await connection.SendAsync(Serializer.Serialize(joinResponse));
         }
 
@@ -49,33 +53,33 @@ namespace ServerPresentation
         {
             if (connection == null) return;
 
-            //Console.WriteLine(message);
-
             string header = Serializer.GetHeader(message);
             if (header == null) return;
 
-            if (header == MovePlayerCommand.HEADER)
+            if (header == Headers.MovePlayerCommand)
             {
                 MovePlayerCommand cmd = Serializer.Deserialize<MovePlayerCommand>(message);
 
-                MovePlayerResponse response = new MovePlayerResponse();
-                response.transactionId = cmd.transactionId;
+                MovePlayerResponse response = new MovePlayerResponse
+                {
+                    TransactionId = cmd.TransactionId
+                };
                 try
                 {
-                    logic.MovePlayer(cmd.playerId, (ServerLogic.MoveDirection)cmd.direction);
-                    response.isSuccess = true;
+                    logic.MovePlayer(cmd.PlayerId, (ServerLogic.MoveDirection)cmd.Direction);
+                    response.IsSuccess = true;
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine($"{ex} --- Failed to move the player");
-                    response.isSuccess = false;
+                    response.IsSuccess = false;
                 }
                 await connection.SendAsync(Serializer.Serialize(response));
 
                 UpdatePlayers();
                 return;
             }
-            if (header == GetPlayersCommand.HEADER)
+            if (header == Headers.GetPlayersCommand)
             {
                 UpdatePlayers();
                 return;
@@ -85,11 +89,14 @@ namespace ServerPresentation
         private async void UpdatePlayers()
         {
             if (connection == null) { return; }
-            UpdatePlayersResponse response = new UpdatePlayersResponse();
-            response.players = logic
-                .GetPlayers()
-                .Select(p => new PlayerData { name = p.Name, x = p.X, y = p.Y, speed = p.Speed })
-                .ToArray();
+            UpdatePlayersResponse response = new UpdatePlayersResponse()
+            {
+                Header = Headers.UpdatePlayersResponse,
+                Players = logic
+                    .GetPlayers()
+                    .Select(p => new PlayerData { Name = p.Name, X = p.X, Y = p.Y, Speed = p.Speed })
+                    .ToArray()
+            };
             await connection.SendAsync(Serializer.Serialize(response));
         }
 

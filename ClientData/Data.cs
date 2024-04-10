@@ -30,7 +30,11 @@ namespace ClientData
         {
             if (ConnectionService.IsConnected())
             {
-                MovePlayerCommand cmd = new MovePlayerCommand(ourPlayerId, (GlobalApi.MoveDirection)direction);
+                MovePlayerCommand cmd = new MovePlayerCommand {
+                    Header = Headers.MovePlayerCommand,
+                    PlayerId = ourPlayerId,
+                    Direction = (GlobalApi.MoveDirection)direction
+                };
                 await ConnectionService.SendAsync(Serializer.Serialize(cmd));
             }
         }
@@ -42,27 +46,27 @@ namespace ClientData
             string header = Serializer.GetHeader(message);
             if (header == null) return;
 
-            if (header == JoinResponse.HEADER)
+            if (header == Headers.JoinResponse)
             {
                 JoinResponse response = Serializer.Deserialize<JoinResponse>(message);
-                ourPlayerId = response.guidForPlayer;
+                ourPlayerId = response.GuidForPlayer;
 
                 GetPlayersCommand cmd = new GetPlayersCommand();
                 ConnectionService.SendAsync(Serializer.Serialize(cmd));
             }
 
-            if (header == UpdatePlayersResponse.HEADER)
+            if (header == Headers.UpdatePlayersResponse)
             {
                 UpdatePlayersResponse response = Serializer.Deserialize<UpdatePlayersResponse>(message);
                 players = new List<IPlayer>();
-                foreach (PlayerData p in response.players)
+                foreach (PlayerData p in response.Players)
                 {
-                    players.Add(new Player(p.name, p.x, p.y, p.speed));
+                    players.Add(new Player(p.Name, p.X, p.Y, p.Speed));
                 }
                 PlayersChanged.Invoke();
             }
 
-            if (header == MovePlayerResponse.HEADER)
+            if (header == Headers.MovePlayerResponse)
             {
                 MovePlayerResponse response = Serializer.Deserialize<MovePlayerResponse>(message);
             }

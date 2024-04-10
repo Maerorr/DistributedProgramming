@@ -7,22 +7,25 @@ using System.Threading.Tasks;
 
 namespace GlobalApi
 {
-    [Serializable]
-    public abstract class ServerCommand
+    public static class Headers
     {
-        public string header;
+        public static string GetPlayersCommand = "GetPlayers";
+        public static string MovePlayerCommand = "MovePlayer";
+        public static string JoinResponse = "JoinResponse";
+        public static string UpdatePlayersResponse = "UpdatePlayers";
+        public static string MovePlayerResponse = "MovePlayerResponse";
+    }
 
-        protected ServerCommand(string header)
-        {
-            this.header = header;
-        }
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "11.0.0.0 (Newtonsoft.Json v13.0.0.0)")]
+    public abstract partial class ServerCommand
+    {
+        [Newtonsoft.Json.JsonProperty("Header", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Header { get; set; }
     }
 
     [Serializable]
     public class GetPlayersCommand : ServerCommand
     {
-        public static string HEADER = "GetPlayers";
-        public GetPlayersCommand() : base(HEADER) { }
     }
 
     [Serializable]
@@ -34,81 +37,65 @@ namespace GlobalApi
         Right,
     }
 
-    [Serializable]
-    public class MovePlayerCommand : ServerCommand
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "11.0.0.0 (Newtonsoft.Json v13.0.0.0)")]
+    public partial class MovePlayerCommand : ServerCommand
     {
-        public static string HEADER = "MovePlayer";
-        public Guid transactionId;
-        public Guid playerId;
-        public MoveDirection direction;
+        [Newtonsoft.Json.JsonProperty("transactionId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid TransactionId { get; set; }
 
-        public MovePlayerCommand(Guid playerId, MoveDirection direction) : base(HEADER)
-        {
-            transactionId = Guid.NewGuid();
-            this.playerId = playerId;
-            this.direction = direction;
-        }
+        [Newtonsoft.Json.JsonProperty("playerId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid PlayerId { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("direction", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public MoveDirection Direction { get; set; }
     }
 
-    [Serializable]
-    public abstract class ServerResponse
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "11.0.0.0 (Newtonsoft.Json v13.0.0.0)")]
+    public abstract partial class ServerResponse
     {
-        public string header { get; private set; }
+        [Newtonsoft.Json.JsonProperty("Header", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Header { get; set; }
 
-        protected ServerResponse(string header)
-        {
-            this.header = header;
-        }
+
     }
 
-    [Serializable]
-    public class JoinResponse : ServerResponse
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "11.0.0.0 (Newtonsoft.Json v13.0.0.0)")]
+    public partial class JoinResponse : ServerResponse
     {
-        public static readonly string HEADER = "JoinResponse";
-        public Guid guidForPlayer;
-
-        public JoinResponse(Guid guidForPlayer) : base(HEADER)
-        {
-            this.guidForPlayer = guidForPlayer;
-        }
+        [Newtonsoft.Json.JsonProperty("guidForPlayer", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid GuidForPlayer { get; set; }
     }
 
-    [Serializable]
-    public struct PlayerData
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "11.0.0.0 (Newtonsoft.Json v13.0.0.0)")]
+    public partial class PlayerData
     {
-        public string name;
-        public float x;
-        public float y;
-        public float speed;
+        [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Name { get; set; }
 
-        public PlayerData(string name, float x, float y, float speed)
-        {
-            this.name = name;
-            this.x = x;
-            this.y = y;
-            this.speed = speed;
-        }
+        [Newtonsoft.Json.JsonProperty("x", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public float X { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("y", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public float Y { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("speed", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public float Speed { get; set; }
     }
 
-    [Serializable]
-    public class UpdatePlayersResponse : ServerResponse
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "11.0.0.0 (Newtonsoft.Json v13.0.0.0)")]
+    public partial class UpdatePlayersResponse : ServerResponse
     {
-        public static readonly string HEADER = "UpdatePlayers";
-        public PlayerData[] players;
-
-        public UpdatePlayersResponse() : base(HEADER)
-        { }
+        [Newtonsoft.Json.JsonProperty("players", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<PlayerData> Players { get; set; }
     }
 
-    [Serializable]
-    public class MovePlayerResponse : ServerResponse
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "11.0.0.0 (Newtonsoft.Json v13.0.0.0)")]
+    public partial class MovePlayerResponse : ServerResponse
     {
-        public static readonly string HEADER = "MovePlayerResponse";
-        public Guid transactionId;
-        public bool isSuccess;
+        [Newtonsoft.Json.JsonProperty("transactionId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid TransactionId { get; set; }
 
-        public MovePlayerResponse() : base(HEADER)
-        {
-        }
+        [Newtonsoft.Json.JsonProperty("isSuccess", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool IsSuccess { get; set; }
     }
 }
