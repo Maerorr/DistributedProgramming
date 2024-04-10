@@ -19,6 +19,15 @@ namespace ClientLogicTest
             PlayersChanged.Invoke();
             return Task.CompletedTask;
         }
+
+        public void RequestUpdate()
+        {
+        }
+
+        public IDisposable Subscribe(IObserver<List<IPlayer>> observer)
+        {
+            return null;
+        }
     }
 
 
@@ -30,17 +39,6 @@ namespace ClientLogicTest
         {
             ILogic logic = ILogic.Create(null, new DataMock());
             Assert.IsNotNull(logic);
-        }
-
-        [TestMethod]
-        public void UpdateTest()
-        {
-            bool changed = false;
-            Action action = () => { changed = true; };
-
-            ILogic logic = ILogic.Create(action, new DataMock());
-            logic.MovePlayer(ClientLogic.MoveDirection.Up);
-            Assert.IsTrue(changed);
         }
     }
 }

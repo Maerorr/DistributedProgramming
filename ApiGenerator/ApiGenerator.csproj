@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ClientData\ClientData.csproj" />
     <ProjectReference Include="..\GlobalApi\GlobalApi.csproj" />
   </ItemGroup>
 

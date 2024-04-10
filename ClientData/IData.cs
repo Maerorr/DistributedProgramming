@@ -42,11 +42,10 @@ namespace ClientData
         Right,
     }
 
-    public interface IData
+    public interface IData : IObservable<List<IPlayer>>
     {
         public IConnectionService ConnectionService { get; }
         public abstract List<IPlayer> GetPlayers();
-        public event Action PlayersChanged;
 
         public static IData Create(IConnectionService? connection)
         {
@@ -54,5 +53,6 @@ namespace ClientData
         }
 
         public Task MovePlayer(MoveDirection direction);
+        public void RequestUpdate();
     }
 }

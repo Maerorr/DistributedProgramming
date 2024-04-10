@@ -23,8 +23,8 @@ namespace GlobalApi
         public string Header { get; set; }
     }
 
-    [Serializable]
-    public class GetPlayersCommand : ServerCommand
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "11.0.0.0 (Newtonsoft.Json v13.0.0.0)")]
+    public partial class GetPlayersCommand : ServerCommand
     {
     }
 
@@ -55,8 +55,6 @@ namespace GlobalApi
     {
         [Newtonsoft.Json.JsonProperty("Header", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Header { get; set; }
-
-
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "11.0.0.0 (Newtonsoft.Json v13.0.0.0)")]

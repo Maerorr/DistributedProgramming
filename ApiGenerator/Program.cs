@@ -1,4 +1,5 @@
 ﻿using GlobalApi;
+using ClientData;
 using NJsonSchema;
 using NJsonSchema.CodeGeneration.CSharp;
 
@@ -9,7 +10,7 @@ namespace ApiGenerator
         private static async Task Main(string[] args)
         {
             Console.WriteLine("Schema:\n\n");
-            JsonSchema schema = JsonSchema.FromType<MovePlayerResponse>();
+            JsonSchema schema = JsonSchema.FromType<GetPlayersCommand>();
             string schemaString = schema.ToJson();
 
             Console.WriteLine(schemaString);

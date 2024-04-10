@@ -6,7 +6,8 @@ namespace ClientData
     {
         public IConnectionService ConnectionService { get; set; }
 
-        public event Action PlayersChanged;
+        private HashSet<IObserver<List<IPlayer>>> observers = new HashSet<IObserver<List<IPlayer>>>();
+
         private List<IPlayer> players;
         private Guid ourPlayerId;
 
@@ -14,6 +15,15 @@ namespace ClientData
         {
             this.ConnectionService = connectionService ?? new ConnectionService();
             ConnectionService.OnMessage += OnMessage;
+        }
+
+        ~Data()
+        {
+            List<IObserver<List<IPlayer>>> cachedObservers = observers.ToList();
+            foreach (IObserver<List<IPlayer>>? observer in cachedObservers)
+            {
+                observer?.OnCompleted();
+            }
         }
 
         public List<IPlayer> GetPlayers()
@@ -51,8 +61,7 @@ namespace ClientData
                 JoinResponse response = Serializer.Deserialize<JoinResponse>(message);
                 ourPlayerId = response.GuidForPlayer;
 
-                GetPlayersCommand cmd = new GetPlayersCommand();
-                ConnectionService.SendAsync(Serializer.Serialize(cmd));
+                RequestUpdate();
             }
 
             if (header == Headers.UpdatePlayersResponse)
@@ -63,12 +72,50 @@ namespace ClientData
                 {
                     players.Add(new Player(p.Name, p.X, p.Y, p.Speed));
                 }
-                PlayersChanged.Invoke();
+                foreach (IObserver<List<IPlayer>>? observer in observers)
+                {
+                    observer.OnNext(new List<IPlayer>(players));
+                }
             }
 
             if (header == Headers.MovePlayerResponse)
             {
                 MovePlayerResponse response = Serializer.Deserialize<MovePlayerResponse>(message);
+            }
+        }
+
+        public void RequestUpdate()
+        {
+            if (ConnectionService == null) return;
+            GetPlayersCommand cmd = new GetPlayersCommand();
+            ConnectionService.SendAsync(Serializer.Serialize(cmd));
+        }
+
+        public IDisposable Subscribe(IObserver<List<IPlayer>> observer)
+        {
+            observers.Add(observer);
+            return new DataDisposable(this, observer);
+        }
+
+        private void UnSubscribe(IObserver<List<IPlayer>> observer)
+        {
+            observers.Remove(observer);
+        }
+
+        private class DataDisposable : IDisposable
+        {
+            private readonly Data data;
+            private readonly IObserver<List<IPlayer>> observer;
+
+            public DataDisposable(Data data, IObserver<List<IPlayer>> observer)
+            {
+                this.data = data;
+                this.observer = observer;
+            }
+
+            public void Dispose()
+            {
+                data.UnSubscribe(observer);
             }
         }
     }
