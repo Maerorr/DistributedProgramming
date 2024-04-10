@@ -14,9 +14,9 @@ namespace ServerPresentation
         private readonly ILogic logic;
         private WebSocketConnection? connection;
 
-        private Program(ILogic logic)
+        private Program()
         {
-            this.logic = logic;
+            this.logic = ILogic.Create(UpdatePlayers);
         }
 
         private async Task StartConnection()
@@ -28,7 +28,7 @@ namespace ServerPresentation
             }
         }
 
-        private void OnConnect(WebSocketConnection connection)
+        private async void OnConnect(WebSocketConnection connection)
         {
             Console.WriteLine($"Connected with {connection}");
 
@@ -37,6 +37,12 @@ namespace ServerPresentation
             connection.OnClose = OnClose;
 
             this.connection = connection;
+
+            // Create player for this connection
+            Guid newPlayerId = logic.AddPlayer();
+
+            JoinResponse joinResponse = new JoinResponse(newPlayerId);
+            await connection.SendAsync(Serializer.Serialize(joinResponse));
         }
 
         private async void OnMessage(string message)
@@ -54,7 +60,7 @@ namespace ServerPresentation
                 response.transactionId = cmd.transactionId;
                 try
                 {
-                    logic.MovePlayer(cmd.playerId, cmd.x, cmd.y);
+                    logic.MovePlayer(cmd.playerId, (ServerLogic.MoveDirection)cmd.direction);
                     response.isSuccess = true;
                 }
                 catch (Exception ex)
@@ -63,7 +69,23 @@ namespace ServerPresentation
                     response.isSuccess = false;
                 }
                 await connection.SendAsync(Serializer.Serialize(response));
+
+                UpdatePlayers();
             }
+            if (header == GetPlayersCommand.HEADER)
+            {
+                UpdatePlayers();
+            }
+        }
+
+        private async void UpdatePlayers()
+        {
+            UpdatePlayersResponse response = new UpdatePlayersResponse();
+            response.players = logic
+                .GetPlayers()
+                .Select(p => new PlayerData { name = p.Name, x = p.X, y = p.Y, speed = p.Speed })
+                .ToArray();
+            await connection.SendAsync(Serializer.Serialize(response));
         }
 
         private void OnError()
@@ -79,7 +101,7 @@ namespace ServerPresentation
 
         private static async Task Main(string[] args)
         {
-            Program program = new Program(ILogic.Create());
+            Program program = new Program();
             await program.StartConnection();
         }
     }

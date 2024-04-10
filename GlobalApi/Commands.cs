@@ -26,20 +26,27 @@ namespace GlobalApi
     }
 
     [Serializable]
+    public enum MoveDirection
+    {
+        Up,
+        Down,
+        Left,
+        Right,
+    }
+
+    [Serializable]
     public class MovePlayerCommand : ServerCommand
     {
         public static string HEADER = "MovePlayer";
         public Guid transactionId;
         public Guid playerId;
-        public float x;
-        public float y;
+        public MoveDirection direction;
 
-        public MovePlayerCommand(Guid playerId, float x, float y) : base(HEADER)
+        public MovePlayerCommand(Guid playerId, MoveDirection direction) : base(HEADER)
         {
             transactionId = Guid.NewGuid();
             this.playerId = playerId;
-            this.x = x;
-            this.y = y;
+            this.direction = direction;
         }
     }
 
@@ -55,17 +62,31 @@ namespace GlobalApi
     }
 
     [Serializable]
+    public class JoinResponse : ServerResponse
+    {
+        public static readonly string HEADER = "JoinResponse";
+        public Guid guidForPlayer;
+
+        public JoinResponse(Guid guidForPlayer) : base(HEADER)
+        {
+            this.guidForPlayer = guidForPlayer;
+        }
+    }
+
+    [Serializable]
     public struct PlayerData
     {
         public string name;
         public float x;
         public float y;
+        public float speed;
 
-        public PlayerData(string name, float x, float y)
+        public PlayerData(string name, float x, float y, float speed)
         {
             this.name = name;
             this.x = x;
             this.y = y;
+            this.speed = speed;
         }
     }
 

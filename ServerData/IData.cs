@@ -19,6 +19,14 @@ namespace ServerData
         }
     }
 
+    public enum MoveDirection
+    {
+        Up,
+        Down,
+        Left,
+        Right
+    }
+
     public interface IData
     {
         public abstract List<IPlayer> GetPlayers();
@@ -29,7 +37,8 @@ namespace ServerData
             return new Data();
         }
 
-        public void MovePlayer(Guid playerId, float x, float y);
+        public void MovePlayer(Guid playerId, MoveDirection direction);
         public bool HasPlayer(Guid playerId);
+        public Guid AddPlayer(string name, float x, float y, float speed);
     }
 }

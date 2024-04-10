@@ -10,6 +10,7 @@ namespace ClientViewModel.Model
     internal class Model : IModel
     {
         public ILogic logic {  get; }
+        public Action playerUpdateCallback;
 
         public Model(ILogic logic)
         {

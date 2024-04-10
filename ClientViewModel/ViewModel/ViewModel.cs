@@ -23,16 +23,22 @@ namespace ClientViewModel.ViewModel
         public ICommand MoveLeftClick { get; set; }
         public ICommand MoveRightClick { get; set; }
 
+        public void UpdatePlayers()
+        {
+            Players = model
+                .GetPlayers()
+                .Select(p => new ViewModelPlayer(p))
+                .ToList();
+        }
+
         public ViewModel()
         {
-            model = IModel.Create();
+            model = IModel.Create(UpdatePlayers);
 
             MoveUpClick = new RelayCommand(model.MoveUp);
             MoveDownClick = new RelayCommand(model.MoveDown);
             MoveLeftClick = new RelayCommand(model.MoveLeft);
             MoveRightClick = new RelayCommand(model.MoveRight);
-
-            Players.Add(new ViewModelPlayer("John", 50, 50, 5));
         }
     }
 }

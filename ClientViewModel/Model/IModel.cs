@@ -19,10 +19,9 @@ namespace ClientViewModel.Model
     {
         public ILogic logic { get; }
 
-        public static IModel Create(ILogic? logic = null)
+        public static IModel Create(Action playerUpdateCallback)
         {
-            ILogic logicApi = logic ?? ILogic.Create();
-            return new Model(logicApi);
+            return new Model(ILogic.Create(playerUpdateCallback));
         }
 
         public List<IModelPlayer> GetPlayers();

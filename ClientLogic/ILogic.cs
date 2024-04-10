@@ -42,10 +42,10 @@ namespace ClientLogic
     {
         public IData data { get; }
 
-        public static ILogic Create(IData? data = null)
+        public static ILogic Create(Action playerUpdateCallback, IData? data = null)
         {
             IData dataApi = data ?? IData.Create(null);
-            return new Logic(dataApi);
+            return new Logic(playerUpdateCallback, dataApi);
         }
 
         public List<ILogicPlayer> GetPlayers();

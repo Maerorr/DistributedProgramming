@@ -12,12 +12,14 @@ namespace ServerData
         private Dictionary<Guid, IPlayer> players = new Dictionary<Guid, IPlayer>();
         private object playersLock = new object();
 
-        public void Add(IPlayer player)
+        public Guid AddPlayer(string name, float x, float y, float speed)
         {
+            Guid newGuid = Guid.NewGuid();
             lock (playersLock)
             {
-                players.Add(new Guid(), player);
+                players.Add(newGuid, IPlayer.Create(name, x, y, speed));
             }
+            return newGuid;
         }
 
         public List<IPlayer> GetPlayers()
@@ -38,15 +40,31 @@ namespace ServerData
             }
         }
 
-        public void MovePlayer(Guid playerId, float x, float y)
+        public void MovePlayer(Guid playerId, MoveDirection direction)
         {
             lock (playersLock)
             {
-                if (players.ContainsKey(playerId) || true)
+                if (players.ContainsKey(playerId))
                 {
-                    Console.WriteLine($"Moving player to {x} {y}");
-                    //players[playerId].X = x;
-                    //players[playerId].Y = y;
+                    IPlayer player = players[playerId];
+                    if (direction == MoveDirection.Up)
+                    {
+                        player.Y -= player.Speed;
+                    }
+                    else if (direction == MoveDirection.Down)
+                    {
+                        player.Y += player.Speed;
+                    }
+                    else if (direction == MoveDirection.Left)
+                    {
+                        player.X -= player.Speed;
+                    }
+                    else if (direction == MoveDirection.Right)
+                    {
+                        player.X += player.Speed;
+                    }
+                    Console.WriteLine($"Moving player {player.Name} to {(int)player.X} {(int)player.Y}");
+                    PlayersChanged.Invoke();
                 }
             }
         }
@@ -55,8 +73,7 @@ namespace ServerData
         {
             lock (playersLock)
             {
-                return true;
-                //return players.ContainsKey(playerId);
+                return players.ContainsKey(playerId);
             }
         }
     }

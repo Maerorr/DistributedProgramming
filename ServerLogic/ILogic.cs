@@ -21,17 +21,27 @@ namespace ServerLogic
         }
     }
 
+    public enum MoveDirection
+    {
+        Up,
+        Down,
+        Left,
+        Right
+    }
+
     public interface ILogic
     {
         public IData data { get; }
 
-        public static ILogic Create(IData? data = null)
+        public static ILogic Create(Action UpdatePlayersCallback, IData? data = null)
         {
             IData dataApi = data ?? IData.Create();
+            dataApi.PlayersChanged += UpdatePlayersCallback;
             return new Logic(dataApi);
         }
 
         public List<ILogicPlayer> GetPlayers();
-        public void MovePlayer(Guid playerId, float x, float y);
+        public Guid AddPlayer();
+        public void MovePlayer(Guid playerId, MoveDirection direction);
     }
 }

@@ -14,12 +14,13 @@
         <ItemsControl x:Name="ic" ItemsSource="{Binding Players}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel>
+                    <Canvas>
+                        <Label Content="{Binding Name}" Canvas.Top="-20" Foreground="White"/>
                         <Ellipse Stroke="Red" Fill="Red" 
                                  Width="50"
                                  Height="50"
                                  />
-                    </StackPanel>
+                    </Canvas>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
             <ItemsControl.ItemsPanel>
