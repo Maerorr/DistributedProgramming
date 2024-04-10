@@ -1,27 +1,34 @@
-﻿
-using ServerData;
-
+﻿using ServerData;
 
 namespace ServerLogic
 {
-    internal class Logic : LogicAbstract
+    internal class Logic : ILogic
     {
-        public Logic(DataStorageAbstract dataStorage) : base(dataStorage) { }
+        public IData data { get; }
 
-        public override List<ILogicPlayer> GetPlayers()
+        public Logic(IData data)
         {
-            List<ILogicPlayer> players = new List<ILogicPlayer>();
-            foreach (IServerPlayer player in dataStorage.GetAll())
-            {
-                players.Add(new LogicPlayer(player));
-            }
-            return players;
+            this.data = data;
         }
 
-        public override void MovePlayer(string name, float x, float y)
+        public List<ILogicPlayer> GetPlayers()
         {
-            IServerPlayer serverPlayer = dataStorage.GetAll().First(p => p.Name == name);
-            serverPlayer.Move(x, y);
+            return data.GetPlayers()
+                .Select(player => new LogicPlayer(player))
+                .Cast<ILogicPlayer>()
+                .ToList();
+        }
+
+        public void MovePlayer(Guid playerId, float x, float y)
+        {
+            if (data.HasPlayer(playerId))
+            {
+                data.MovePlayer(playerId, x, y);
+            }
+            else
+            {
+                throw new KeyNotFoundException();
+            }
         }
     }
 }

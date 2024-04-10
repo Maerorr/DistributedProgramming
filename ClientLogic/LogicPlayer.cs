@@ -1,11 +1,6 @@
-﻿using ServerData;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ClientData;
 
-namespace ServerLogic
+namespace ClientLogic
 {
     internal class LogicPlayer : ILogicPlayer
     {
@@ -14,7 +9,7 @@ namespace ServerLogic
         public float Y { get; set; }
         public float Speed { get; set; }
 
-        public LogicPlayer(string name,  float x, float y, float speed)
+        public LogicPlayer(string name, float x, float y, float speed)
         {
             Name = name;
             X = x;

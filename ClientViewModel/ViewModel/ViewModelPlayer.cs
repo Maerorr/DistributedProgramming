@@ -1,20 +1,15 @@
-﻿using ServerData;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ClientViewModel.Model;
 
-namespace ServerLogic
+namespace ClientViewModel.ViewModel
 {
-    internal class LogicPlayer : ILogicPlayer
+    public class ViewModelPlayer : IModelPlayer
     {
         public string Name { get; set; }
         public float X { get; set; }
         public float Y { get; set; }
         public float Speed { get; set; }
 
-        public LogicPlayer(string name,  float x, float y, float speed)
+        public ViewModelPlayer(string name, float x, float y, float speed)
         {
             Name = name;
             X = x;
@@ -22,7 +17,7 @@ namespace ServerLogic
             Speed = speed;
         }
 
-        public LogicPlayer(IPlayer player)
+        public ViewModelPlayer(IModelPlayer player)
         {
             Name = player.Name;
             X = player.X;

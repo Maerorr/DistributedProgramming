@@ -1,87 +1,86 @@
-﻿using GlobalAPIs;
-using Newtonsoft.Json;
-using ServerData;
+﻿using GlobalApi;
 using ServerLogic;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace ServerPresentation;
-
-internal class Program
+namespace ServerPresentation
 {
-
-    private WebSocketConnection? ws;
-    private readonly LogicAbstract logic;
-
-    private Program(LogicAbstract logicAbstract)
+    internal class Program
     {
-        this.logic = logicAbstract;
-    }
+        private readonly ILogic logic;
+        private WebSocketConnection? connection;
 
-    private async Task Connect()
-    {
-        while(true)
+        private Program(ILogic logic)
         {
-            Console.WriteLine("Connecting . . .");
-            await WebSocketServer.StartServer(9998, OnConnect);
+            this.logic = logic;
         }
-    }
 
-    private void OnConnect(WebSocketConnection connection)
-    {
-        Console.WriteLine($"Connected to: {connection}");
-        connection.onMessage = OnMessage;
-        connection.onError = OnError;
-        connection.onClose = OnClose;
-    }
-
-    private async void OnMessage(string message)
-    {
-        if (ws == null)
-            return;
-
-        Console.WriteLine($"Received message: {message}");
-
-        if (Serializer.GetCommandHeader(message) == GetPlayersCommand.HEADER)
+        private async Task StartConnection()
         {
-            GetPlayersCommand getPlayersCommand = Serializer.Deserialize<GetPlayersCommand>(message);
-            await SendPlayers();
+            while (true)
+            {
+                Console.WriteLine("Waiting for connection...");
+                await WebSocketServer.StartServer(13337, OnConnect);
+            }
         }
-        else if (Serializer.GetCommandHeader(message) == MovePlayerCommand.HEADER)
+
+        private void OnConnect(WebSocketConnection connection)
         {
-            MovePlayerCommand movePlayerCommand = Serializer.Deserialize<MovePlayerCommand>(message);
-            logic.MovePlayer(movePlayerCommand.name, movePlayerCommand.x, movePlayerCommand.y);
+            Console.WriteLine($"Connected with {connection}");
+
+            connection.OnMessage = OnMessage;
+            connection.OnError = OnError;
+            connection.OnClose = OnClose;
+
+            this.connection = connection;
         }
-    }
 
-    private async void OnClose()
-    {
-        ws = null;
-        Console.WriteLine($"Connection closed: {ws}");
-    }
+        private async void OnMessage(string message)
+        {
+            if (connection == null) return;
 
-    private async Task SendPlayers()
-    {
-        if (ws == null)
-            return;
+            string header = Serializer.GetHeader(message);
+            if (header == null) return;
 
-        UpdatePlayersResponse response = new UpdatePlayersResponse();
-        List<ILogicPlayer> playes = logic.GetPlayers();
-        response.players = playes.Select(p => new PlayerData(p.Name, p.Position.X, p.Position.Y)).ToArray();
+            if (header == MovePlayerCommand.HEADER)
+            {
+                MovePlayerCommand cmd = Serializer.Deserialize<MovePlayerCommand>(message);
 
-        string responseJson = JsonConvert.SerializeObject(response);
-        await ws.SendAsync(responseJson);
-    }
+                MovePlayerResponse response = new MovePlayerResponse();
+                response.transactionId = cmd.transactionId;
+                try
+                {
+                    logic.MovePlayer(cmd.playerId, cmd.x, cmd.y);
+                    response.isSuccess = true;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"{ex} --- Failed to move the player");
+                    response.isSuccess = false;
+                }
+                await connection.SendAsync(Serializer.Serialize(response));
+            }
+        }
 
-    private async void OnError()
-    {
-        if (ws == null)
-            return;
+        private void OnError()
+        {
+            Console.WriteLine("Connection errored out");
+        }
 
-        Console.WriteLine($"Error on connection: {ws}");
-    }
+        private void OnClose()
+        {
+            Console.WriteLine("Connection closed");
+            connection = null;
+        }
 
-    private static async Task Main(string[] args)
-    {
-        Program program = new Program(LogicAbstract.CreateInstance());
-        await program.Connect();
+        private static async Task Main(string[] args)
+        {
+            Program program = new Program(ILogic.Create());
+            await program.StartConnection();
+        }
     }
 }

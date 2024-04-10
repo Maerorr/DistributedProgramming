@@ -5,7 +5,7 @@ using System.Net.WebSockets;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using GlobalAPIs;
+using GlobalApi;
 
 namespace ServerPresentation
 {
@@ -74,7 +74,7 @@ namespace ServerPresentation
                     WebSocketReceiveResult receiveResult = ws.ReceiveAsync(segments, CancellationToken.None).Result;
                     if (receiveResult.MessageType == WebSocketMessageType.Close)
                     {
-                        onClose?.Invoke();
+                        OnClose?.Invoke();
                         ws.CloseAsync(WebSocketCloseStatus.NormalClosure, "I am closing", CancellationToken.None);
                         return;
                     }
@@ -83,7 +83,7 @@ namespace ServerPresentation
                     {
                         if (count >= buffer.Length)
                         {
-                            onClose?.Invoke();
+                            OnClose?.Invoke();
                             ws.CloseAsync(WebSocketCloseStatus.InvalidPayloadData, "That's too long", CancellationToken.None);
                             return;
                         }
@@ -92,7 +92,7 @@ namespace ServerPresentation
                         count += receiveResult.Count;
                     }
                     string _message = Encoding.UTF8.GetString(buffer, 0, count);
-                    onMessage?.Invoke(_message);
+                    OnMessage?.Invoke(_message);
                 }
             }
         }
