@@ -49,6 +49,8 @@ namespace ServerPresentation
         {
             if (connection == null) return;
 
+            //Console.WriteLine(message);
+
             string header = Serializer.GetHeader(message);
             if (header == null) return;
 
@@ -71,15 +73,18 @@ namespace ServerPresentation
                 await connection.SendAsync(Serializer.Serialize(response));
 
                 UpdatePlayers();
+                return;
             }
             if (header == GetPlayersCommand.HEADER)
             {
                 UpdatePlayers();
+                return;
             }
         }
 
         private async void UpdatePlayers()
         {
+            if (connection == null) { return; }
             UpdatePlayersResponse response = new UpdatePlayersResponse();
             response.players = logic
                 .GetPlayers()

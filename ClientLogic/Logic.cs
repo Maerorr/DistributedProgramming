@@ -13,8 +13,12 @@ namespace ClientLogic
             this.data = data;
             this.updateCallback = playerUpdateCallback;
             data.PlayersChanged += () => updateCallback.Invoke();
-            ConnectionService = new LogicConnectionService(data.ConnectionService);
-            Task.Run(() => ConnectionService.Connect(new Uri(@"ws://localhost:13337")));
+
+            if (data.ConnectionService != null)
+            {
+               ConnectionService = new LogicConnectionService(data.ConnectionService);
+                Task.Run(() => ConnectionService.Connect(new Uri(@"ws://localhost:13337")));
+            }
         }
 
         public List<ILogicPlayer> GetPlayers()

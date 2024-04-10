@@ -19,6 +19,7 @@ namespace ServerData
             {
                 players.Add(newGuid, IPlayer.Create(name, x, y, speed));
             }
+            PlayersChanged.Invoke();
             return newGuid;
         }
 
@@ -30,14 +31,6 @@ namespace ServerData
                 result.AddRange(players.Values.Select(item => (IPlayer)item.Clone()));
             }
             return result;
-        }
-
-        public void Remove(Guid playerId)
-        {
-            lock (playersLock)
-            {
-                players.Remove(playerId);
-            }
         }
 
         public void MovePlayer(Guid playerId, MoveDirection direction)
@@ -63,7 +56,7 @@ namespace ServerData
                     {
                         player.X += player.Speed;
                     }
-                    Console.WriteLine($"Moving player {player.Name} to {(int)player.X} {(int)player.Y}");
+                    //Console.WriteLine($"Moving player {player.Name} to {(int)player.X} {(int)player.Y}");
                     PlayersChanged.Invoke();
                 }
             }

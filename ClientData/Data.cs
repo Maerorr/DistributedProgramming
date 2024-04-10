@@ -61,6 +61,11 @@ namespace ClientData
                 }
                 PlayersChanged.Invoke();
             }
+
+            if (header == MovePlayerResponse.HEADER)
+            {
+                MovePlayerResponse response = Serializer.Deserialize<MovePlayerResponse>(message);
+            }
         }
     }
 }
